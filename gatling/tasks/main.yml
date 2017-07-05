@@ -1,0 +1,30 @@
+---
+# tasks file for gatling
+
+- name: Download zipped Gatling bundle
+  get_url:
+    url: "https://repo1.maven.org/maven2/io/gatling/highcharts/gatling-charts-highcharts-bundle/2.2.5/gatling-charts-highcharts-bundle-2.2.5-bundle.zip"
+    dest: "~/gatling-charts-highcharts-bundle-2.2.5-bundle.zip"
+    mode: "a+rxw"
+    checksum: "md5:b2f3448466b815c29d2d81fe2335503e"
+    validate_certs: no
+
+- name: Install system dependencies
+  package:
+    name: "{{item}}"
+    state: present
+  with_items:
+    - "unzip"
+
+- name: Check if the gatling distribution was unarchived
+  stat:
+    path: "~/gatling-charts-highcharts-bundle-2.2.5"
+  register: gatling_unarchived
+
+- name: Unzip the Gatling bundle
+  unarchive:
+    src: "~/gatling-charts-highcharts-bundle-2.2.5-bundle.zip"
+    dest: "~/"
+    remote_src: yes
+    creates: no
+  when: gatling_unarchived.stat.exists == False or gatling_unarchived.stat.isdir == False
