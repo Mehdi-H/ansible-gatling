@@ -9,6 +9,16 @@ import unittest
 class TestGatlingDistribution(unittest.TestCase):
 
     def setUp(self):
+        """
+        Some initializations are made.
+        * We fetch the gatling host from testinfra + Ansible inventory,
+        * We set the user,
+        * We set some information about the gatling distribution
+            * distribution name,
+            * version,
+            * package name (=distribution + version),
+            * zip name
+        """
         self.host = testinfra.get_backend(
             "ansible://gatling?ansible_inventory=.molecule/ansible_inventory"
         )
@@ -28,21 +38,11 @@ class TestGatlingDistribution(unittest.TestCase):
             }
         }
 
-    def test_hosts_file(self):
-        f = self.file('/etc/hosts')
-        self.assertTrue(f.exists)
-        self.assertTrue(f.user == 'root')
-        self.assertTrue(f.group == 'root')
-
-    def test_gatling_distribution_is_present_as_a_directory(self):
-
-        # Given f as a Gatling distribution resource
-        f = self.file('/' + self.user + '/' + self.gatling.get("package")())
-
-        # Then f should be a directory
-        self.assertTrue(f.is_directory)
-
     def test_gatling_distribution_has_the_expected_content_in_it(self):
+        """
+        We test that the gatling .zip distribution is present,
+            And that its md5 digest is as expected.
+        """
 
         # Given f as a Gatling distribution resource
         f = self.file(
@@ -56,6 +56,17 @@ class TestGatlingDistribution(unittest.TestCase):
         self.assertTrue(f.size > 0)
         # and f's hash should be as expected
         self.assertTrue(f.md5sum == gatling_distribution_md5_hash)
+
+    def test_gatling_distribution_is_present_as_a_directory(self):
+        """
+        We test that the gatling .zip distribution was unarchived,
+            And that it is now present as a directory.
+        """
+        # Given f as a Gatling distribution resource
+        f = self.file('/' + self.user + '/' + self.gatling.get("package")())
+
+        # Then f should be a directory
+        self.assertTrue(f.is_directory)
 
 
 if __name__ == '__main__':

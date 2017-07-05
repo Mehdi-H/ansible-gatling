@@ -1,7 +1,7 @@
 [![travis](https://travis-ci.org/Mehdi-H/ansible-gatling.svg?branch=master)
 ](https://travis-ci.org/Mehdi-H/ansible-gatling)
 
-# Ansible-galting
+# Ansible-gatling
 
 An ansible role to deploy gatling on an Ubuntu distribution.
 
