@@ -1,5 +1,6 @@
 ---
 - hosts: gatling
   user: root
+  gather_facts: yes
   roles:
     - role: gatling

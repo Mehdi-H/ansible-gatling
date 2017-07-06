@@ -1,0 +1,47 @@
+# druid-prerequisite-checker/tasks/java-install.yml
+###
+---
+
+- name: Add the apt-repostory for Java 8
+  package:
+    name: "software-properties-common"
+    state: present
+
+- name: Add the Oracle Java8 repository
+  apt_repository:
+    repo: "ppa:webupd8team/java"
+
+- name: Install the package "aptitude"
+  package:
+    name: "aptitude"
+    state: present
+
+- name: update and upgrade apt packages
+  apt:
+    update_cache: yes
+    upgrade: yes
+    cache_valid_time: 20
+
+- name: Accept the Java 8 license
+#  shell:
+#    cmd: "echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | sudo /usr/bin/debconf-set-selections"
+# This does not seem to work ..
+  debconf:
+    name: oracle-java8-installer
+    question: shared/accepted-oracle-license-v1-1
+    vtype: select
+    value: "true"
+  tags:
+    - accept-java-licence
+
+- name: Install Oracle Java 8 & make it as default version to prevent conflict
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+    - "oracle-java8-installer"
+    - "ca-certificates"
+    - "oracle-java8-set-default"
+  tags:
+    - accept-java-licence

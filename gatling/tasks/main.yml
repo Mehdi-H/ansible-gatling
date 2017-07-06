@@ -15,6 +15,11 @@
     state: present
   with_items:
     - "unzip"
+    - "debconf"
+    - "debconf-utils"
+
+- name: Install java for Gatling.io
+  include: java-install.yml
 
 - name: Check if the gatling distribution was unarchived
   stat:

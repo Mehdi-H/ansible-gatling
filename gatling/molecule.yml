@@ -36,4 +36,3 @@ molecule:
       - converge
       - idempotence
       - verify
-      - destroy

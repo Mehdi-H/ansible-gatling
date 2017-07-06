@@ -1,9 +1,5 @@
 import testinfra
-# import testinfra.utils.ansible_runner
 import unittest
-
-# testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
-# '.molecule/ansible_inventory').get_hosts('all')
 
 
 class TestGatlingDistribution(unittest.TestCase):
