@@ -8,6 +8,7 @@ before_install:
 install:
   - pip install molecule
   - pip install docker
+  - pip install --upgrade molecule docker ansible testinfra
 before_script:
   - cd gatling
 script:
