@@ -5,10 +5,35 @@ driver:
   name: docker
 docker:
   containers:
-    - name: gatling
+    - name: gatling1
       image: ubuntu
       image_version: latest
       ansible_groups:
-        - group1
+        - gatling
+    - name: gatling2
+      image: ubuntu
+      image_version: latest
+      ansible_groups:
+        - gatling
+    - name: gatling3
+      image: ubuntu
+      image_version: latest
+      ansible_groups:
+        - gatling
+    - name: target1
+      image: ubuntu
+      image_version: latest
+      ansible_groups:
+        - target
 verifier:
   name: testinfra
+molecule:
+  test:
+    sequence:
+      - syntax
+      - destroy
+      - create
+      - converge
+      - idempotence
+      - verify
+      - destroy

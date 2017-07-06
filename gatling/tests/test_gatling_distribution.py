@@ -19,12 +19,16 @@ class TestGatlingDistribution(unittest.TestCase):
             * package name (=distribution + version),
             * zip name
         """
-        self.host = testinfra.get_backend(
+
+        # We get every hosts that fit in the gatling group in a list
+        gatling_hosts = testinfra.get_hosts([
             "ansible://gatling?ansible_inventory=.molecule/ansible_inventory"
+            ]
         )
-        self.file = self.host.get_module("File")
-        self.user = "root"
+        # We set some information on the remote environment
         self.gatling = {
+            "hosts": gatling_hosts,
+            "user": "root",
             "distribution": "gatling-charts-highcharts-bundle-",
             "version": "2.2.5",
             "package": (
@@ -44,29 +48,38 @@ class TestGatlingDistribution(unittest.TestCase):
             And that its md5 digest is as expected.
         """
 
-        # Given f as a Gatling distribution resource
-        f = self.file(
-            '/' + self.user + '/' +
-            self.gatling.get("zip").get("name")()
-        )
-        # and knowing f's md5 hash
-        gatling_distribution_md5_hash = self.gatling.get("zip").get("md5sum")
+        for host in self.gatling.get("hosts"):
 
-        # Then f should not be empty
-        self.assertTrue(f.size > 0)
-        # and f's hash should be as expected
-        self.assertTrue(f.md5sum == gatling_distribution_md5_hash)
+            # Given f as a Gatling distribution resource
+            f = host.file(
+                '/' + self.gatling.get("user") + '/' +
+                self.gatling.get("zip").get("name")()
+            )
+            # and knowing f's md5 hash
+            gatling_distribution_md5_hash = \
+                self.gatling.get("zip").get("md5sum")
+
+            # Then f should not be empty
+            self.assertTrue(f.size > 0)
+            # and f's hash should be as expected
+            self.assertTrue(f.md5sum == gatling_distribution_md5_hash)
 
     def test_gatling_distribution_is_present_as_a_directory(self):
         """
         We test that the gatling .zip distribution was unarchived,
             And that it is now present as a directory.
         """
-        # Given f as a Gatling distribution resource
-        f = self.file('/' + self.user + '/' + self.gatling.get("package")())
 
-        # Then f should be a directory
-        self.assertTrue(f.is_directory)
+        for host in self.gatling.get("hosts"):
+
+            # Given f as a Gatling distribution resource
+            f = host.file(
+                '/' + self.gatling.get("user") + '/' +
+                self.gatling.get("package")()
+            )
+
+            # Then f should be a directory
+            self.assertTrue(f.is_directory)
 
 
 if __name__ == '__main__':
