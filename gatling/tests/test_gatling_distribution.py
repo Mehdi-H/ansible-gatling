@@ -30,19 +30,32 @@ class TestGatlingDistribution(unittest.TestCase):
             "hosts": gatling_hosts,
             "user": "root",
             "distribution": "gatling-charts-highcharts-bundle-",
+            "home": (
+                lambda: "/" + self.gatling.get("user") + "/" +
+                self.gatling.get("distribution") +
+                self.gatling.get("version") + "/"
+            ),
             "version": "2.2.5",
             "package": (
-                lambda: self.gatling['distribution'] + self.gatling["version"]
+                lambda: self.gatling.get("distribution") +
+                self.gatling.get("version")
             ),
             "zip": {
                 "name": (
                     lambda: self.gatling['package']() + '-bundle.zip'
                 ),
                 "md5sum": "b2f3448466b815c29d2d81fe2335503e"
+            },
+            "simulation": {
+                "name": "write.streaming.StaresRamp",
+                "directory": "/user-files/simulations",
+                "runner_script": "/bin/gatling.sh",
+                "report_directory": "/results/",
+                "reports_directory": "/results/merged_reports/"
             }
         }
 
-    def test_gatling_distribution_has_the_expected_content_in_it(self):
+    def test_gatling_distribution_has_the_expected_digest(self):
         """
         We test that the gatling .zip distribution is present,
             And that its md5 digest is as expected.
@@ -80,6 +93,58 @@ class TestGatlingDistribution(unittest.TestCase):
 
             # Then f should be a directory
             self.assertTrue(f.is_directory)
+
+    def test_gatling_distribution_has_a_simulation_directory(self):
+
+        for host in self.gatling.get("hosts"):
+
+            # Given the path to gatling simulation folder
+            simulation_directory = host.file(
+                self.gatling.get("home")() +
+                self.gatling.get("simulation").get("directory")
+             )
+
+            # Then the simulation folder exists and it is a directory
+            self.assertTrue(simulation_directory.is_directory)
+
+    def test_gatling_distribution_has_a_runner_script(self):
+
+        for host in self.gatling.get("hosts"):
+
+            # Given the path to gatling runner script
+            runner_script = host.file(
+                self.gatling.get("home")() +
+                self.gatling.get("simulation").get("runner_script")
+             )
+
+            # Then the simulation folder exists and it is a directory
+            self.assertTrue(runner_script.is_file)
+
+    def test_g_d_has_a_report_directory_for_the_hosted_simulations(self):
+
+        for host in self.gatling.get("hosts"):
+
+            # Given the path to gatling runner script
+            report_directory = host.file(
+                self.gatling.get("home")() +
+                self.gatling.get("simulation").get("report_directory")
+             )
+
+            # Then the simulation folder exists and it is a directory
+            self.assertTrue(report_directory.is_directory)
+
+    def test_g_d_has_a_report_directory_for_the_merged_simulations(self):
+
+        for host in self.gatling.get("hosts"):
+
+            # Given the path to gatling runner script
+            reports_directory = host.file(
+                self.gatling.get("home")() +
+                self.gatling.get("simulation").get("reports_directory")
+             )
+
+            # Then the simulation folder exists and it is a directory
+            self.assertTrue(reports_directory.is_directory)
 
 
 if __name__ == '__main__':

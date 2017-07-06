@@ -3,10 +3,10 @@
 
 - name: Download zipped Gatling bundle
   get_url:
-    url: "https://repo1.maven.org/maven2/io/gatling/highcharts/gatling-charts-highcharts-bundle/2.2.5/gatling-charts-highcharts-bundle-2.2.5-bundle.zip"
+    url: "{{gatling_download.url}}"
     dest: "~/gatling-charts-highcharts-bundle-2.2.5-bundle.zip"
     mode: "a+rxw"
-    checksum: "md5:b2f3448466b815c29d2d81fe2335503e"
+    checksum: "md5:{{gatling_download.md5}}"
     validate_certs: no
 
 - name: Install system dependencies
@@ -28,3 +28,10 @@
     remote_src: yes
     creates: no
   when: gatling_unarchived.stat.exists == False or gatling_unarchived.stat.isdir == False
+
+- name: Create a folder to receive the merged reports
+  # create a directory if it doesn't exist
+  file:
+    path: "{{gatling_simulation.reports_directory}}"
+    state: directory
+    mode: "a+rw"

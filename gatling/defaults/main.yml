@@ -1,6 +1,17 @@
 ---
 # defaults file for gatling
 
-gatling:
-  group_name: "gatling"
-  instance_name: "gatling"
+gatling_user: "root"
+gatling_distribution: "gatling-charts-highcharts-bundle"
+gatling_version: "2.2.5"
+gatling_home: "/{{gatling_user}}/{{gatling_distribution}}-{{gatling_version}}"
+gatling_download:
+  url: "https://repo1.maven.org/maven2/io/gatling/highcharts/{{gatling_distribution}}/{{gatling_version}}/{{gatling_distribution}}-{{gatling_version}}-bundle.zip"
+  md5: "b2f3448466b815c29d2d81fe2335503e"
+
+gatling_simulation:
+    name: "write.streaming.StaresRamp"
+    directory: "{{gatling_home}}/user-files/simulations"
+    runner_script: "{{gatling_home}}/bin/gatling.sh"
+    report_directory: "{{gatling_home}}/results/"
+    reports_directory: "{{gatling_home}}/results/merged_reports/"
