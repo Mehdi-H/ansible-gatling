@@ -142,6 +142,28 @@ class TestGatlingDistribution(unittest.TestCase):
             # Then the simulation folder exists and it is a directory
             self.assertTrue(reports_directory.is_directory)
 
+    def test_g_d_has_all_the_simulation_files(self):
+
+        # Given a list of simulation files
+        simulation_file_names = [
+            "AbstractTranquility", "DataGenerator",
+            "DruidSineSignalSimulation", "MeasureFeeder",
+            "StaresRamp", "TranquilityInstance"
+        ]
+
+        for host in self.gatling.get("hosts"):
+
+            for simulation_file_name in simulation_file_names:
+                # Then, each of these simulation files exists
+                simulation_file = host.file(
+                    self.gatling.get("home")() +
+                    self.gatling.get("simulation").get("directory") +
+                    "/" + simulation_file_name + ".scala"
+                )
+
+                self.assertTrue(simulation_file.size > 0)
+                self.assertTrue(simulation_file.is_file)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,4 +1,10 @@
 ---
+- hosts: all
+  gather_facts: yes
+  user: root
+  roles:
+    - role: launcher
+
 - hosts: gatling
   user: root
   gather_facts: yes

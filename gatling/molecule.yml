@@ -25,6 +25,11 @@ docker:
       image_version: latest
       ansible_groups:
         - target
+    - name: launcher1
+      image: ubuntu
+      image_version: latest
+      ansible_groups:
+        - launcher
 verifier:
   name: testinfra
 molecule:

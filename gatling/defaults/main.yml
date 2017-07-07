@@ -15,3 +15,13 @@ gatling_simulation:
     runner_script: "{{gatling_home}}/bin/gatling.sh"
     report_directory: "{{gatling_home}}/results/"
     reports_directory: "{{gatling_home}}/results/merged_reports/"
+
+target:
+  host: "localhost"
+  port: "80"
+
+simulation:
+  nbSensors: 1000
+  duration:
+    seconds: 1
+    minutes: 1
