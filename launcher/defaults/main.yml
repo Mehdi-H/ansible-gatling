@@ -1,0 +1,6 @@
+---
+# defaults file for launcher
+
+simulation:
+  name: "StaresRamp"
+  user: "root"

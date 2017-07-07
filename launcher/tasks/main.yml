@@ -1,0 +1,14 @@
+---
+# tasks file for launcher
+
+#- name: debug
+#  debug:
+#    var: groups['gatling'] | map('extract', hostvars, ['ansible_eth0', 'ipv4', 'address']) | join(' ')
+
+- name: Copy the scaling_out script to the launcher machine
+  template:
+    src: "gatling_scaling_out.sh.j2"
+    dest: "~/"
+    force: no
+  delegate_to: "{{item}}"
+  with_items: "{{groups['launcher']}}"
