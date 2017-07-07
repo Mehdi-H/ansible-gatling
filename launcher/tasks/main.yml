@@ -8,7 +8,7 @@
 - name: Copy the scaling_out script to the launcher machine
   template:
     src: "gatling_scaling_out.sh.j2"
-    dest: "~/"
+    dest: "~/gatling_scaling_out.sh"
     force: no
   delegate_to: "{{item}}"
   with_items: "{{groups['launcher']}}"

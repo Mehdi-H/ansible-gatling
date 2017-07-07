@@ -16,14 +16,28 @@ class TestGatlingDistribution(unittest.TestCase):
             * zip name
         """
 
-        # We get every hosts that fit in the gatling group in a list
+        # We fetch every hosts that fit in the gatling group in a list
         gatling_hosts = testinfra.get_hosts([
             "ansible://gatling?ansible_inventory=.molecule/ansible_inventory"
             ]
         )
+
+        # We fetch every hosts that fit in the launcher group in a list
+        gatling_launchers = testinfra.get_hosts([
+            "ansible://launcher?ansible_inventory=.molecule/ansible_inventory"
+            ]
+        )
+
         # We set some information on the remote environment
         self.gatling = {
             "hosts": gatling_hosts,
+            "launcher": {
+                "hosts": gatling_launchers,
+                "script": "gatling_scaling_out.sh",
+                "home": (
+                    lambda: "/" + self.gatling.get("user") + "/"
+                )
+            },
             "user": "root",
             "distribution": "gatling-charts-highcharts-bundle-",
             "home": (
@@ -163,6 +177,20 @@ class TestGatlingDistribution(unittest.TestCase):
 
                 self.assertTrue(simulation_file.size > 0)
                 self.assertTrue(simulation_file.is_file)
+
+    def test_the_launcher_has_the_launcher_script(self):
+
+        for launcher in self.gatling.get("launcher").get("hosts"):
+
+            # Given the location of the launcher script file
+            launcher_script = launcher.file(
+                self.gatling.get("launcher").get("home")() +
+                self.gatling.get("launcher").get("script")
+            )
+
+            # Then it points to a file containing our script
+            self.assertTrue(launcher_script.size > 0)
+            self.assertTrue(launcher_script.is_file)
 
 
 if __name__ == '__main__':
